@@ -79,24 +79,40 @@
         const plannerResult = db.exec(`SELECT * FROM runs WHERE plannerid = ${id}`);
 	
 	let averageTime = null;
+	let successRate = null;
+	let averageLength = null;
 	
 	if (plannerResult.length > 0){
 	  const columns = plannerResult[0].columns;
 	  const values = plannerResult[0].values;
-	  const timeIndex = columns.indexOf("time");
 	  
-	  if (timeIndex !== -1 && values.length>0){
+	  const timeIndex = columns.indexOf("time");
+	  const solvedIndex = columns.indexOf("solved");
+	  const simplifiedLengthIndex = columns.indexOf("simplified_solution_length");
+	  
+	  if (timeIndex !== -1 && solvedIndex !== -1 && simplifiedLengthIndex !== -1 && values.length > 0){
 	    const timeValues = values.map(row => row[timeIndex]);
+	    const solvedValues = values.map(row => row[solvedIndex]);
+	    const lengthValues = values.map(row => row[simplifiedLengthIndex]).filter(v => v !== null);
+	    
 	    const totalTime = timeValues.reduce((a, b) => a + b, 0);
             averageTime = totalTime / timeValues.length;
+	  
+	    const solvedCount = solvedValues.filter(v => v === 1).length;
+            successRate = (solvedCount / solvedValues.length) * 100;
+            
+            if (lengthValues.length > 0) {
+    	      const totalLength = lengthValues.reduce((a, b) => a + b, 0);
+              averageLength = totalLength / lengthValues.length;
+            }
 	  }
 	}
 	
 	table.row.add({
 	  planner: plannerName,
-	  success: "",
+	  success: successRate !== null ? successRate.toFixed(1) + "%" : "",
 	  time: averageTime !== null ? averageTime.toFixed(3) : "",
-	  length: ""
+	  length: averageLength !== null ? averageLength.toFixed(3) : ""
 	});
       }
       table.draw();   
