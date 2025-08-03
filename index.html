@@ -78,7 +78,7 @@
         const plannerName = id_to_name[id];
         const plannerResult = db.exec(`SELECT * FROM runs WHERE plannerid = ${id}`);
 	
-	let averageTime = "";
+	let averageTime = null;
 	
 	if (plannerResult.length > 0){
 	  const columns = plannerResult[0].columns;
@@ -88,14 +88,14 @@
 	  if (timeIndex !== -1 && values.length>0){
 	    const timeValues = values.map(row => row[timeIndex]);
 	    const totalTime = timeValues.reduce((a, b) => a + b, 0);
-            averageTime = (totalTime / timeValues.length).toFixed(3);
+            averageTime = totalTime / timeValues.length;
 	  }
 	}
 	
 	table.row.add({
 	  planner: plannerName,
 	  success: "",
-	  time: averageTime.toFixed(3),
+	  time: averageTime !== null ? averageTime.toFixed(3) : "",
 	  length: ""
 	});
       }
@@ -132,6 +132,20 @@
     }
   
   */
+  </script>
+  
+  <script>
+    $(document).ready(function () {
+      $('#leaderboard').DataTable({
+        data: [],
+        columns: [
+          { data: 'planner' },
+          { data: 'success' },
+          { data: 'time' },
+          { data: 'length' }
+        ]
+      });
+    });
   </script>
 
 </body>
