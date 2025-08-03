@@ -1,32 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Planner Benchmark Leaderboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Motion Planning Leaderboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    select {
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Planner Benchmark Leaderboard</h1>
-  <table border="1">
-    <tr>
-      <th>Planner</th>
-      <th>Success Rate</th>
-      <th>Avg Time (s)</th>
-      <th>Avg Path Length</th>
-    </tr>
-    <tr>
-      <td>RRT*</td>
-      <td>95%</td>
-      <td>2.1</td>
-      <td>10.4</td>
-    </tr>
-    <tr>
-      <td>PRM*</td>
-      <td>93%</td>
-      <td>3.4</td>
-      <td>11.2</td>
-    </tr>
-    <!-- Add more rows dynamically later -->
+  <h1>Motion Planning Leaderboard</h1>
+  <label for="experiment">Select experiment:</label>
+  <select id="experiment">
+    <option value="box_ur5">box_ur5</option>
+    <option value="cage_panda">cage_panda</option>
+  </select>
+
+  <table id="leaderboard" class="display" style="width:100%">
+    <thead>
+      <tr>
+        <th>Planner</th>
+        <th>Success</th>
+        <th>Time (s)</th>
+        <th>Path Length</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Populated by JS -->
+    </tbody>
   </table>
+
+  <script>
+    function loadLeaderboard(exp) {
+      fetch(`${exp}.json`)
+        .then(res => res.json())
+        .then(data => {
+          const table = $('#leaderboard').DataTable();
+          table.clear();
+          data.forEach(row => table.row.add(row));
+          table.draw();
+        });
+    }
+
+    $(document).ready(function () {
+      $('#leaderboard').DataTable({
+        data: [],
+        columns: [
+          { data: 'planner' },
+          { data: 'success' },
+          { data: 'time' },
+          { data: 'length' }
+        ]
+      });
+
+      $('#experiment').on('change', function () {
+        loadLeaderboard(this.value);
+      });
+
+      // Load default
+      loadLeaderboard($('#experiment').val());
+    });
+  </script>
 </body>
 </html>
 
