@@ -29,6 +29,10 @@
     <option value="cage_panda">box_ur5</option>
   </select>
 
+  <button onclick="loadDatabase()">Load</button>
+
+  <pre id="result">Select a database above</pre>
+
   <table id="leaderboard" class="display" style="width:100%">
     <thead>
       <tr>
@@ -42,6 +46,24 @@
       <!-- Populated by JS -->
     </tbody>
   </table>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
+  <script>
+    async function loadDatabase() {
+      const dbName = document.getElementById('dbSelect').value;
+      const response = await fetch(`data/${dbName}`);
+      const buffer = await response.arrayBuffer();
+  
+      const SQL = await initSqlJs({
+        locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}`
+      });
+
+      const db = new SQL.Database(new Uint8Array(buffer));
+      const result = db.exec("SELECT * FROM experiments"); // Example table
+
+      document.getElementById('result').textContent = JSON.stringify(result, null, 2);
+    }
+  </script>
 
   <script>
     function loadLeaderboard(exp) {
