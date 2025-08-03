@@ -59,6 +59,54 @@
       });
 
       const db = new SQL.Database(new Uint8Array(buffer));
+      const result = db.exec("SELECT id, name FROM plannerConfigs");
+      
+      const id_to_name = {};
+      if (result.length > 0){
+      
+        const values = result[0].values;
+        values.forEach(row => {
+          const [id, name] = row;
+          id_to_name[id] = name;
+        });
+      }
+      
+      const table = $('#leaderboard').DataTable();
+      table.clear();
+    
+      for (const id in id_to_name){
+        const plannerName = id_to_name[id];
+        const plannerResult = db.exec(`SELECT * FROM runs WHERE plannerid = ${id}`);
+	
+	let averageTime = "";
+	
+	if (plannerResult.length > 0){
+	  const columns = plannerResult[0].columns;
+	  const values = plannerResult[0].values;
+	  const timeIndex = columns.indexOf("time");
+	  
+	  if (timeIndex !== -1 && values.length>0){
+	    const timeValues = values.map(row => row[timeIndex]);
+	    const totalTime = timeValues.reduce((a, b) => a + b, 0);
+            averageTime = (totalTime / timeValues.length).toFixed(3);
+	  }
+	}
+	
+	table.row.add({
+	  planner: plannerName,
+	  success: "",
+	  time: averageTime.toFixed(3),
+	  length: ""
+	});
+      }
+      table.draw();   
+  
+    }  
+    
+      
+      
+      
+      /*
       const result = db.exec("SELECT * FROM experiments"); // Example table
 
       document.getElementById('result').textContent = JSON.stringify(result, null, 2);
@@ -82,7 +130,8 @@
         alert("No data found in the selected database.");
       }
     }
-
+  
+  */
   </script>
 
 </body>
