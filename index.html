@@ -25,8 +25,8 @@
   <h1>MotionBenchMaker 2.0 Benchmarking Leaderboard</h1>
   <label for="experiment">Select experiment:</label>
   <select id="experiment">
-    <option value="box_ur5">box_panda</option>
-    <option value="cage_panda">box_ur5</option>
+    <option value="box_panda_merged.db">box_panda</option>
+    <option value="box_ur5_merged.db">box_ur5</option>
   </select>
 
   <button onclick="loadDatabase()">Load</button>
@@ -50,7 +50,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
   <script>
     async function loadDatabase() {
-      const dbName = document.getElementById('dbSelect').value;
+      const dbName = document.getElementById('experiment').value;
       const response = await fetch(`data/${dbName}`);
       const buffer = await response.arrayBuffer();
   
@@ -62,9 +62,30 @@
       const result = db.exec("SELECT * FROM experiments"); // Example table
 
       document.getElementById('result').textContent = JSON.stringify(result, null, 2);
+    
+    
+      if (result.length > 0) {
+        const columns = result[0].columns;
+        const values = result[0].values;
+
+        const table = $('#leaderboard').DataTable();
+        table.clear();
+
+        values.forEach(row => {
+          const rowObj = {};
+          columns.forEach((col, i) => rowObj[col] = row[i]);
+          table.row.add(rowObj);
+        });
+
+        table.draw();
+      } else {
+        alert("No data found in the selected database.");
+      }
     }
+
   </script>
 
+  <!--
   <script>
     function loadLeaderboard(exp) {
       fetch(`${exp}.json`)
@@ -96,6 +117,7 @@
       loadLeaderboard($('#experiment').val());
     });
   </script>
+  -->
 </body>
 </html>
 
