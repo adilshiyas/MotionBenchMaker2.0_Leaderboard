@@ -19,6 +19,9 @@
       font-size: 1rem;
       margin-bottom: 20px;
     }
+    .dt-center {
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -159,6 +162,9 @@
           { data: 'success' },
           { data: 'time' },
           { data: 'length' }
+        ],
+        columnDefs: [
+          { className: "dt-center", targets: [1, 2, 3] } 
         ]
       });
     });
