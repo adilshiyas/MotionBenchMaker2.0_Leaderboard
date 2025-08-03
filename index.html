@@ -85,39 +85,6 @@
 
   </script>
 
-  <!--
-  <script>
-    function loadLeaderboard(exp) {
-      fetch(`${exp}.json`)
-        .then(res => res.json())
-        .then(data => {
-          const table = $('#leaderboard').DataTable();
-          table.clear();
-          data.forEach(row => table.row.add(row));
-          table.draw();
-        });
-    }
-
-    $(document).ready(function () {
-      $('#leaderboard').DataTable({
-        data: [],
-        columns: [
-          { data: 'planner' },
-          { data: 'success' },
-          { data: 'time' },
-          { data: 'length' }
-        ]
-      });
-
-      $('#experiment').on('change', function () {
-        loadLeaderboard(this.value);
-      });
-
-      // Load default
-      loadLeaderboard($('#experiment').val());
-    });
-  </script>
-  -->
 </body>
 </html>
 
