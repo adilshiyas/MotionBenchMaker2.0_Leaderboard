@@ -14,6 +14,7 @@
     }
     h1 {
       margin-bottom: 20px;
+      text-align: center;
     }
     select {
       font-size: 1rem;
@@ -33,11 +34,10 @@
     <option value="bookshelf_smallp_3_10.db" data-gif="gifs/bookshelf_smallp.gif">bookshelf_small_panda</option>
   </select>
   
-  <img id="preview-gif" alt="Scenario preview" style="max-width: 480px; display:none;" />
-
   <button onclick="loadDatabase()">Load</button>
-
   <pre id="result">Select a database above</pre>
+  
+  <img id="preview-gif" alt="Scenario preview" style="width:100%; max-width:300px; height:auto; display:none; margin:auto;" />
 
   <table id="leaderboard" class="display" style="width:100%">
     <thead>
