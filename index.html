@@ -28,7 +28,7 @@
   <h1>MotionBenchMaker 2.0 Benchmarking Leaderboard</h1>
   <label for="experiment">Select experiment:</label>
   <select id="experiment">
-    <option value="box_panda_merged.db">box_panda</option>
+    <option value="boxp_3_10.db">box_panda</option>
     <option value="box_ur5_merged.db">box_ur5</option>
   </select>
 
@@ -40,7 +40,12 @@
     <thead>
       <tr>
         <th>Planner</th>
-        <th>Success</th>
+        <th>
+          Success
+          <span title="Percentage of runs where the planner reached the goal">
+            &#9432;
+          </span>
+        </th>
         <th>Time (s)</th>
         <th>Path Length</th>
       </tr>
