@@ -39,15 +39,30 @@
   <table id="leaderboard" class="display" style="width:100%">
     <thead>
       <tr>
-        <th>Planner</th>
+        <th>
+          Planner
+          <span title="Tested in 3 scenes with 10 runs per scene">
+            &#9432;
+          </span>
+        </th>
         <th>
           Success
           <span title="Percentage of runs where the planner reached the goal">
             &#9432;
           </span>
         </th>
-        <th>Time (s)</th>
-        <th>Path Length</th>
+        <th>
+          Time (s)
+          <span title="Median planning time from successful runs">
+            &#9432;
+          </span>
+        </th>
+        <th>
+          Path Length
+          <span title="Path length after simplification from successful runs">
+            &#9432;
+          </span>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -98,22 +113,31 @@
 	  const solvedIndex = columns.indexOf("solved");
 	  const simplifiedLengthIndex = columns.indexOf("simplified_solution_length");
 	  
-	  if (timeIndex !== -1 && solvedIndex !== -1 && simplifiedLengthIndex !== -1 && values.length > 0){
-	    const timeValues = values.map(row => row[timeIndex]);
-	    const solvedValues = values.map(row => row[solvedIndex]);
-	    const lengthValues = values.map(row => row[simplifiedLengthIndex]).filter(v => v !== null);
-	    
-	    const totalTime = timeValues.reduce((a, b) => a + b, 0);
-            averageTime = totalTime / timeValues.length;
+	  if (timeIndex !== -1 && solvedIndex !== -1 && values.length > 0){
 	  
-	    const solvedCount = solvedValues.filter(v => v === 1).length;
+            const solvedValues = values.map(r => r[solvedIndex]);
+            const solvedCount = solvedValues.filter(v => v === 1).length;
             successRate = (solvedCount / solvedValues.length) * 100;
             
-            if (lengthValues.length > 0) {
-    	      const totalLength = lengthValues.reduce((a, b) => a + b, 0);
-              averageLength = totalLength / lengthValues.length;
+            const successRows = values.filter(r => r[solvedIndex] === 1);
+            if (successRows.length > 0) {
+              const times = successRows.map(r => r[timeIndex]).filter(v => v != null);
+              if (times.length > 0) {
+                times.sort((a,b)=>a-b);
+                const mid = Math.floor(times.length/2);
+                const med = times.length % 2 ? times[mid] : (times[mid-1] + times[mid]) / 2;
+                averageTime = med; // will .toFixed(3) later
+              }
             }
-	  }
+            
+            if (simplifiedLengthIndex !== -1) {
+              const lengths = successRows.map(r => r[simplifiedLengthIndex]).filter(v => v != null);
+              if (lengths.length > 0) {
+                const avgLen = lengths.reduce((a,b)=>a+b,0) / lengths.length;
+                averageLength = avgLen;
+              }
+            }
+          }
 	}
 	
 	table.row.add({
