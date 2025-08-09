@@ -133,8 +133,15 @@
             if (simplifiedLengthIndex !== -1) {
               const lengths = successRows.map(r => r[simplifiedLengthIndex]).filter(v => v != null);
               if (lengths.length > 0) {
-                const avgLen = lengths.reduce((a,b)=>a+b,0) / lengths.length;
-                averageLength = avgLen;
+
+                const sorted = [...lengths].sort((a, b) => a - b); // sort ascending
+                const mid = Math.floor(sorted.length / 2);
+                
+                if (sorted.length % 2 === 0) {
+                  averageLength = (sorted[mid - 1] + sorted[mid]) / 2;
+                } else {
+                  averageLength = sorted[mid];
+                }  
               }
             }
           }
