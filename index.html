@@ -28,10 +28,12 @@
   <h1>MotionBenchMaker 2.0 Benchmarking Leaderboard</h1>
   <label for="experiment">Select experiment:</label>
   <select id="experiment">
-    <option value="boxp_3_10.db">box_panda</option>
-    <option value="table_pickp_3_10.db">table_pick_panda</option>
-    <option value="bookshelf_smallp_3_10.db">bookshelf_small_panda</option>
+    <option value="boxp_3_10.db" data-gif="gifs/boxp.gif">box_panda</option>
+    <option value="table_pickp_3_10.db" data-gif="gifs/table_pickp.gif">table_pick_panda</option>
+    <option value="bookshelf_smallp_3_10.db" data-gif="gifs/bookshelf_smallp.gif">bookshelf_small_panda</option>
   </select>
+  
+  <img id="preview-gif" alt="Scenario preview" style="max-width: 480px; display:none;" />
 
   <button onclick="loadDatabase()">Load</button>
 
@@ -158,36 +160,29 @@
       table.draw();   
   
     }  
-    
-      
-      
-      
-      /*
-      const result = db.exec("SELECT * FROM experiments"); // Example table
+  </script>
+  
+  <script>
+    const select = document.getElementById('experiment');
+    const preview = document.getElementById('preview-gif');
 
-      document.getElementById('result').textContent = JSON.stringify(result, null, 2);
-    
-    
-      if (result.length > 0) {
-        const columns = result[0].columns;
-        const values = result[0].values;
-
-        const table = $('#leaderboard').DataTable();
-        table.clear();
-
-        values.forEach(row => {
-          const rowObj = {};
-          columns.forEach((col, i) => rowObj[col] = row[i]);
-          table.row.add(rowObj);
-        });
-
-        table.draw();
+    function updatePreview() {
+      const opt = select.selectedOptions[0];
+      const gif = opt?.dataset?.gif || "";
+      if (gif) {
+        preview.src = gif;
+        preview.style.display = "block";
       } else {
-        alert("No data found in the selected database.");
+        preview.removeAttribute('src');
+        preview.style.display = "none";
       }
     }
-  
-  */
+
+    // change immediately when user picks an option
+    select.addEventListener('change', updatePreview);
+
+    // show default on first load
+    document.addEventListener('DOMContentLoaded', updatePreview);
   </script>
   
   <script>
