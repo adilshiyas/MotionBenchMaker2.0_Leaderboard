@@ -109,6 +109,9 @@
     
       for (const id in id_to_name){
         const plannerName = id_to_name[id];
+        
+        plannerName = plannerName.replace(/^geometric_/, "");
+        plannerName = plannerName.replace(/star$/, "*");
         const plannerResult = db.exec(`SELECT * FROM runs WHERE plannerid = ${id}`);
 	
 	let averageTime = null;
