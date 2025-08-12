@@ -108,7 +108,7 @@
       table.clear();
     
       for (const id in id_to_name){
-        const plannerName = id_to_name[id];
+        let plannerName = id_to_name[id];
         
         plannerName = plannerName.replace(/^geometric_/, "");
         plannerName = plannerName.replace(/star$/, "*");
