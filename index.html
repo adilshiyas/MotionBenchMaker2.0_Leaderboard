@@ -1,77 +1,234 @@
-<!DOCTYPE html>
+from pathlib import Path
+
+html = r'''<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MotionBenchMaker 2.0 Benchmarking Leaderboard</title>
+
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
   <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
+
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" />
+
   <style>
+    :root {
+      --accent: #007acc;
+      --text: #1f2933;
+      --muted: #6b7280;
+      --card: #f5f7fa;
+      --border: #e5e7eb;
+    }
+
     body {
-      font-family: sans-serif;
-      padding: 20px;
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 24px;
+      max-width: 1200px;
+      margin: auto;
+      color: var(--text);
+      background: #ffffff;
     }
+
     h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 2.2rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 28px;
+      font-size: 1.05rem;
+    }
+
+    .intro-card {
+      background: var(--card);
+      padding: 16px 22px;
+      border-radius: 12px;
+      margin: 0 auto 26px auto;
+      text-align: center;
+      line-height: 1.55;
+      max-width: 900px;
+      border: 1px solid var(--border);
+    }
+
+    .controls {
+      text-align: center;
       margin-bottom: 20px;
     }
-    select {
+
+    .controls label {
+      font-weight: 600;
+      margin-right: 8px;
+    }
+
+    .controls select,
+    .controls button {
       font-size: 1rem;
-      margin-bottom: 20px;
+      padding: 8px 12px;
+      margin: 4px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
     }
+
+    .controls button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .controls button:hover {
+      background: #005f9e;
+    }
+
+    #result {
+      text-align: center;
+      color: var(--muted);
+      background: transparent;
+      margin-bottom: 10px;
+      white-space: pre-wrap;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .gif-container {
+      text-align: center;
+      margin: 20px 0 32px 0;
+    }
+
+    #preview-gif {
+      max-width: 760px;
+      width: 92%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+      display: none;
+      border: 1px solid var(--border);
+    }
+
+    table.dataTable {
+      margin-top: 22px !important;
+      margin-bottom: 30px !important;
+    }
+
+    table.dataTable thead th {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
     .dt-center {
       text-align: center;
     }
+
+    .submit-section {
+      text-align: center;
+      margin: 34px 0 20px 0;
+    }
+
+    .submit-button {
+      display: inline-block;
+      padding: 13px 22px;
+      background-color: var(--accent);
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0, 122, 204, 0.25);
+    }
+
+    .submit-button:hover {
+      background-color: #005f9e;
+    }
+
+    .submit-caption {
+      margin-top: 9px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+      }
+
+      .controls label,
+      .controls select,
+      .controls button {
+        display: block;
+        margin: 8px auto;
+      }
+
+      #preview-gif {
+        width: 100%;
+      }
+    }
   </style>
 </head>
+
 <body>
   <h1>MotionBenchMaker 2.0 Benchmarking Leaderboard</h1>
-  <label for="experiment">Select experiment:</label>
-  <select id="experiment">
-    <option value="bookshelf_smallp_3_10.db" data-gif="gifs/bookshelf_smallp.gif">bookshelf_small_panda</option>
-    <option value="bookshelf_tallp_3_10.db" data-gif="gifs/bookshelf_tallp.gif">bookshelf_tall_panda</option>
-    <option value="bookshelf_thinp_3_10.db" data-gif="gifs/bookshelf_thinp.gif">bookshelf_thin_panda</option>
-    <option value="boxp_3_10.db" data-gif="gifs/boxp.gif">box_panda</option>
-    <option value="cagep_3_10.db" data-gif="gifs/cagep.gif">cage_panda</option>
-    <option value="kitchenp_3_10.db" data-gif="gifs/kitchenp.gif">kitchen_panda</option>
-    <option value="table_barsp_3_10.db" data-gif="gifs/table_barsp.gif">table_bars_panda</option>
-    <option value="table_pickp_3_10.db" data-gif="gifs/table_pickp.gif">table_pick_panda</option>
-    <option value="table_under_pickp_3_10.db" data-gif="gifs/table_under_pickp.gif">table_under_pick_panda</option>
-    
-    <option value="boxf_3_10.db" data-gif="gifs/boxf.gif">box_fetch</option>
-  </select>
-  
-  <button onclick="loadDatabase()">Load</button>
-  <pre id="result">Select a database above</pre>
-  
-  <img id="preview-gif" alt="Scenario preview" style="width:100%; max-width:480px; height:auto; display:none;" />
+
+  <p class="subtitle">
+    Benchmark results generated using Pinocchio, Coal, Pink, MeshCat, and OMPL.
+  </p>
+
+  <div class="intro-card">
+    MotionBenchMaker 2.0 is a Python motion-planning benchmark suite built around
+    lightweight kinematics, collision checking, and planner evaluation. Select a
+    scenario below to view planner success rate, median planning time, and median
+    simplified path length.
+  </div>
+
+  <div class="controls">
+    <label for="experiment">Select experiment:</label>
+    <select id="experiment">
+      <option value="bookshelf_smallp_3_10.db" data-gif="gifs/bookshelf_smallp.gif">bookshelf_small_panda</option>
+      <option value="bookshelf_tallp_3_10.db" data-gif="gifs/bookshelf_tallp.gif">bookshelf_tall_panda</option>
+      <option value="bookshelf_thinp_3_10.db" data-gif="gifs/bookshelf_thinp.gif">bookshelf_thin_panda</option>
+      <option value="boxp_3_10.db" data-gif="gifs/boxp.gif">box_panda</option>
+      <option value="cagep_3_10.db" data-gif="gifs/cagep.gif">cage_panda</option>
+      <option value="kitchenp_3_10.db" data-gif="gifs/kitchenp.gif">kitchen_panda</option>
+      <option value="table_barsp_3_10.db" data-gif="gifs/table_barsp.gif">table_bars_panda</option>
+      <option value="table_pickp_3_10.db" data-gif="gifs/table_pickp.gif">table_pick_panda</option>
+      <option value="table_under_pickp_3_10.db" data-gif="gifs/table_under_pickp.gif">table_under_pick_panda</option>
+      <option value="boxf_3_10.db" data-gif="gifs/boxf.gif">box_fetch</option>
+    </select>
+
+    <button onclick="loadDatabase()">Load</button>
+  </div>
+
+  <pre id="result">Loading default experiment...</pre>
+
+  <div class="gif-container">
+    <img id="preview-gif" alt="Scenario preview" />
+  </div>
 
   <table id="leaderboard" class="display" style="width:100%">
     <thead>
       <tr>
         <th>
           Planner
-          <span title="Tested in 3 scenes with 10 runs per scene">
-            &#9432;
-          </span>
+          <span title="Tested in 3 scenes with 10 runs per scene">&#9432;</span>
         </th>
         <th>
           Success
-          <span title="Percentage of runs where the planner reached the goal">
-            &#9432;
-          </span>
+          <span title="Percentage of runs where the planner reached the goal">&#9432;</span>
         </th>
         <th>
           Time (s)
-          <span title="Median planning time from successful runs">
-            &#9432;
-          </span>
+          <span title="Median planning time from successful runs">&#9432;</span>
         </th>
         <th>
           Path Length
-          <span title="Median path length after simplification from successful runs">
-            &#9432;
-          </span>
+          <span title="Median path length after simplification from successful runs">&#9432;</span>
         </th>
       </tr>
     </thead>
@@ -79,158 +236,171 @@
       <!-- Populated by JS -->
     </tbody>
   </table>
-  
-  <div style="text-align:center; margin-bottom: 30px;">
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfAM3IDaRjhPK9DD6B3IVmQkoi70CsW4mPjQTMI0Y05UQ8Ntw/viewform?usp=header"
+
+  <div class="submit-section">
+    <a
+      class="submit-button"
+      href="https://docs.google.com/forms/d/e/1FAIpQLSfAM3IDaRjhPK9DD6B3IVmQkoi70CsW4mPjQTMI0Y05UQ8Ntw/viewform?usp=header"
       target="_blank"
-      style="
-        display:inline-block;
-        padding:12px 20px;
-        background-color:#007acc;
-        color:white;
-        border-radius:6px;
-        text-decoration:none;
-        font-weight:600;
-      ">
+      rel="noopener noreferrer"
+    >
       Submit your Planner
     </a>
-    <div style="margin-top:8px; font-size:0.9rem; color:#666;">
-      Upload your planner ZIP (< 100 MB)  
+    <div class="submit-caption">
+      Upload your planner ZIP (&lt; 100 MB)
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
   <script>
+    function median(values) {
+      if (!values.length) return null;
+
+      const sorted = [...values].sort((a, b) => a - b);
+      const mid = Math.floor(sorted.length / 2);
+
+      return sorted.length % 2
+        ? sorted[mid]
+        : (sorted[mid - 1] + sorted[mid]) / 2;
+    }
+
     async function loadDatabase() {
-      const dbName = document.getElementById('experiment').value;
-      const response = await fetch(`data/${dbName}`);
-      const buffer = await response.arrayBuffer();
-  
-      const SQL = await initSqlJs({
-        locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}`
-      });
+      const resultBox = document.getElementById("result");
+      const dbName = document.getElementById("experiment").value;
 
-      const db = new SQL.Database(new Uint8Array(buffer));
-      const result = db.exec("SELECT id, name FROM plannerConfigs");
-      
-      const id_to_name = {};
-      if (result.length > 0){
-      
-        const values = result[0].values;
-        values.forEach(row => {
-          const [id, name] = row;
-          id_to_name[id] = name;
+      resultBox.textContent = `Loading ${dbName}...`;
+
+      try {
+        const response = await fetch(`data/${dbName}`);
+
+        if (!response.ok) {
+          throw new Error(`Could not load data/${dbName}`);
+        }
+
+        const buffer = await response.arrayBuffer();
+
+        const SQL = await initSqlJs({
+          locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}`
         });
-      }
-      
-      const table = $('#leaderboard').DataTable();
-      table.clear();
-    
-      for (const id in id_to_name){
-        let plannerName = id_to_name[id];
-        
-        plannerName = plannerName.replace(/^geometric_/, "");
-        plannerName = plannerName.replace(/star$/, "*");
-        const plannerResult = db.exec(`SELECT * FROM runs WHERE plannerid = ${id}`);
-	
-	let averageTime = null;
-	let successRate = null;
-	let averageLength = null;
-	
-	if (plannerResult.length > 0){
-	  const columns = plannerResult[0].columns;
-	  const values = plannerResult[0].values;
-	  
-	  const timeIndex = columns.indexOf("time");
-	  const solvedIndex = columns.indexOf("solved");
-	  const simplifiedLengthIndex = columns.indexOf("simplified_solution_length");
-	  
-	  if (timeIndex !== -1 && solvedIndex !== -1 && values.length > 0){
-	  
-            const solvedValues = values.map(r => r[solvedIndex]);
-            const solvedCount = solvedValues.filter(v => v === 1).length;
-            successRate = (solvedCount / solvedValues.length) * 100;
-            
-            const successRows = values.filter(r => r[solvedIndex] === 1);
-            if (successRows.length > 0) {
-              const times = successRows.map(r => r[timeIndex]).filter(v => v != null);
-              if (times.length > 0) {
-                times.sort((a,b)=>a-b);
-                const mid = Math.floor(times.length/2);
-                const med = times.length % 2 ? times[mid] : (times[mid-1] + times[mid]) / 2;
-                averageTime = med; // will .toFixed(3) later
-              }
-            }
-            
-            if (simplifiedLengthIndex !== -1) {
-              const lengths = successRows.map(r => r[simplifiedLengthIndex]).filter(v => v != null);
-              if (lengths.length > 0) {
 
-                const sorted = [...lengths].sort((a, b) => a - b); // sort ascending
-                const mid = Math.floor(sorted.length / 2);
-                
-                if (sorted.length % 2 === 0) {
-                  averageLength = (sorted[mid - 1] + sorted[mid]) / 2;
-                } else {
-                  averageLength = sorted[mid];
-                }  
+        const db = new SQL.Database(new Uint8Array(buffer));
+        const result = db.exec("SELECT id, name FROM plannerConfigs");
+
+        const id_to_name = {};
+        if (result.length > 0) {
+          const values = result[0].values;
+          values.forEach(row => {
+            const [id, name] = row;
+            id_to_name[id] = name;
+          });
+        }
+
+        const table = $("#leaderboard").DataTable();
+        table.clear();
+
+        for (const id in id_to_name) {
+          let plannerName = id_to_name[id];
+
+          plannerName = plannerName.replace(/^geometric_/, "");
+          plannerName = plannerName.replace(/star$/, "*");
+
+          const plannerResult = db.exec(`SELECT * FROM runs WHERE plannerid = ${id}`);
+
+          let medianTime = null;
+          let successRate = null;
+          let medianLength = null;
+
+          if (plannerResult.length > 0) {
+            const columns = plannerResult[0].columns;
+            const values = plannerResult[0].values;
+
+            const timeIndex = columns.indexOf("time");
+            const solvedIndex = columns.indexOf("solved");
+            const simplifiedLengthIndex = columns.indexOf("simplified_solution_length");
+
+            if (timeIndex !== -1 && solvedIndex !== -1 && values.length > 0) {
+              const solvedValues = values.map(r => r[solvedIndex]);
+              const solvedCount = solvedValues.filter(v => v === 1).length;
+              successRate = (solvedCount / solvedValues.length) * 100;
+
+              const successRows = values.filter(r => r[solvedIndex] === 1);
+
+              const times = successRows
+                .map(r => r[timeIndex])
+                .filter(v => v != null);
+
+              medianTime = median(times);
+
+              if (simplifiedLengthIndex !== -1) {
+                const lengths = successRows
+                  .map(r => r[simplifiedLengthIndex])
+                  .filter(v => v != null);
+
+                medianLength = median(lengths);
               }
             }
           }
-	}
-	
-	table.row.add({
-	  planner: plannerName,
-	  success: successRate !== null ? successRate.toFixed(1) + "%" : "",
-	  time: averageTime !== null ? averageTime.toFixed(3) : "",
-	  length: averageLength !== null ? averageLength.toFixed(3) : ""
-	});
+
+          table.row.add({
+            planner: plannerName,
+            success: successRate !== null ? successRate.toFixed(1) + "%" : "",
+            time: medianTime !== null ? medianTime.toFixed(3) : "",
+            length: medianLength !== null ? medianLength.toFixed(3) : ""
+          });
+        }
+
+        table.draw();
+        resultBox.textContent = `Loaded ${dbName}`;
+      } catch (error) {
+        resultBox.textContent = error.message;
+        console.error(error);
       }
-      table.draw();   
-  
-    }  
+    }
   </script>
-  
+
   <script>
-    const select = document.getElementById('experiment');
-    const preview = document.getElementById('preview-gif');
+    const select = document.getElementById("experiment");
+    const preview = document.getElementById("preview-gif");
 
     function updatePreview() {
       const opt = select.selectedOptions[0];
       const gif = opt?.dataset?.gif || "";
+
       if (gif) {
         preview.src = gif;
-        preview.style.display = "block";
+        preview.style.display = "inline-block";
       } else {
-        preview.removeAttribute('src');
+        preview.removeAttribute("src");
         preview.style.display = "none";
       }
     }
 
-    // change immediately when user picks an option
-    select.addEventListener('change', updatePreview);
-
-    // show default on first load
-    document.addEventListener('DOMContentLoaded', updatePreview);
+    select.addEventListener("change", updatePreview);
   </script>
-  
+
   <script>
     $(document).ready(function () {
-      $('#leaderboard').DataTable({
+      $("#leaderboard").DataTable({
         data: [],
         columns: [
-          { data: 'planner' },
-          { data: 'success' },
-          { data: 'time' },
-          { data: 'length' }
+          { data: "planner" },
+          { data: "success" },
+          { data: "time" },
+          { data: "length" }
         ],
         columnDefs: [
-          { className: "dt-center", targets: [0, 1, 2, 3] } 
-        ]
+          { className: "dt-center", targets: [0, 1, 2, 3] }
+        ],
+        order: [[1, "desc"], [2, "asc"]]
       });
+
+      updatePreview();
+      loadDatabase();
     });
   </script>
-
 </body>
 </html>
+'''
 
+out_path = Path("/mnt/data/index.html")
+out_path.write_text(html, encoding="utf-8")
+out_path
