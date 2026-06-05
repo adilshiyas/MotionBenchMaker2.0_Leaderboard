@@ -16,7 +16,7 @@ https://adilshiyas.github.io/MotionBenchMaker2.0_Leaderboard/
 
 ## Submit a Planner
 
-Researchers and developers can submit their own planners through the leaderboard website for evaluation on supported MotionBenchMaker scenarios.
+Anyone can submit their own planners through the leaderboard website for evaluation on supported MotionBenchMaker scenarios.
 
 ## Related Projects
 
