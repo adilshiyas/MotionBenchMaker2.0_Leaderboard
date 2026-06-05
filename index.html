@@ -15,19 +15,6 @@ html = """<!DOCTYPE html>
 
   <style>
     :root {
-      --accent: #007acc;
-      --accent-hover: #005f9e;
-      --bg: #ffffff;
-      --text: #1f2933;
-      --muted: #6b7280;
-      --card: #f5f7fa;
-      --border: #e5e7eb;
-      --table-bg: #ffffff;
-      --input-bg: #ffffff;
-      --shadow: rgba(0, 0, 0, 0.18);
-    }
-
-    body.dark {
       --accent: #4aa3ff;
       --accent-hover: #2b83d3;
       --bg: #0f172a;
@@ -36,8 +23,25 @@ html = """<!DOCTYPE html>
       --card: #111827;
       --border: #334155;
       --table-bg: #111827;
+      --table-row-alt: #172033;
+      --table-row-hover: #1e293b;
       --input-bg: #1e293b;
       --shadow: rgba(0, 0, 0, 0.5);
+    }
+
+    body.light {
+      --accent: #007acc;
+      --accent-hover: #005f9e;
+      --bg: #ffffff;
+      --text: #1f2933;
+      --muted: #6b7280;
+      --card: #f5f7fa;
+      --border: #e5e7eb;
+      --table-bg: #ffffff;
+      --table-row-alt: #f8fafc;
+      --table-row-hover: #eef2f7;
+      --input-bg: #ffffff;
+      --shadow: rgba(0, 0, 0, 0.18);
     }
 
     body {
@@ -151,20 +155,44 @@ html = """<!DOCTYPE html>
     table.dataTable {
       margin-top: 22px !important;
       margin-bottom: 30px !important;
-      background: var(--table-bg);
-      color: var(--text);
+      background: var(--table-bg) !important;
+      color: var(--text) !important;
+      border-collapse: collapse !important;
     }
 
-    table.dataTable thead th {
+    table.dataTable thead th,
+    table.dataTable thead td {
+      background: var(--card) !important;
+      color: var(--text) !important;
+      border-bottom: 1px solid var(--border) !important;
       font-weight: 700;
       font-size: 1.05rem;
-      color: var(--text);
-      border-bottom-color: var(--border);
+    }
+
+    table.dataTable tbody tr {
+      background: var(--table-bg) !important;
+      color: var(--text) !important;
+    }
+
+    table.dataTable tbody tr.odd {
+      background: var(--table-bg) !important;
+    }
+
+    table.dataTable tbody tr.even {
+      background: var(--table-row-alt) !important;
+    }
+
+    table.dataTable tbody tr:hover {
+      background: var(--table-row-hover) !important;
     }
 
     table.dataTable tbody td {
-      color: var(--text);
-      border-top-color: var(--border);
+      color: var(--text) !important;
+      border-top: 1px solid var(--border) !important;
+    }
+
+    table.dataTable.no-footer {
+      border-bottom: 1px solid var(--border) !important;
     }
 
     .dataTables_wrapper,
@@ -177,11 +205,30 @@ html = """<!DOCTYPE html>
 
     .dataTables_wrapper input,
     .dataTables_wrapper select {
-      background: var(--input-bg);
-      color: var(--text);
-      border: 1px solid var(--border);
+      background: var(--input-bg) !important;
+      color: var(--text) !important;
+      border: 1px solid var(--border) !important;
       border-radius: 5px;
       padding: 4px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+      color: var(--text) !important;
+      border: 1px solid transparent !important;
+      background: transparent !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+      color: white !important;
+      background: var(--accent) !important;
+      border: 1px solid var(--accent) !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+      color: white !important;
+      background: var(--accent-hover) !important;
+      border: 1px solid var(--accent-hover) !important;
     }
 
     .dt-center {
@@ -239,7 +286,7 @@ html = """<!DOCTYPE html>
 
 <body>
   <div class="top-bar">
-    <button id="mode-toggle" class="mode-toggle" type="button">🌙 Dark mode</button>
+    <button id="mode-toggle" class="mode-toggle" type="button">☀️ Light mode</button>
   </div>
 
   <h1>MotionBenchMaker 2.0 Benchmarking Leaderboard</h1>
@@ -447,16 +494,16 @@ html = """<!DOCTYPE html>
 
   <script>
     function applyTheme(theme) {
-      const isDark = theme === "dark";
-      document.body.classList.toggle("dark", isDark);
-      document.getElementById("mode-toggle").textContent = isDark
-        ? "☀️ Light mode"
-        : "🌙 Dark mode";
+      const isLight = theme === "light";
+      document.body.classList.toggle("light", isLight);
+      document.getElementById("mode-toggle").textContent = isLight
+        ? "🌙 Dark mode"
+        : "☀️ Light mode";
       localStorage.setItem("mbm-theme", theme);
     }
 
     document.getElementById("mode-toggle").addEventListener("click", () => {
-      const nextTheme = document.body.classList.contains("dark") ? "light" : "dark";
+      const nextTheme = document.body.classList.contains("light") ? "dark" : "light";
       applyTheme(nextTheme);
     });
 
@@ -490,6 +537,6 @@ html = """<!DOCTYPE html>
 </html>
 """
 
-out_path = Path("/mnt/data/index_darkmode.html")
+out_path = Path("/mnt/data/index.html")
 out_path.write_text(html, encoding="utf-8")
 out_path
