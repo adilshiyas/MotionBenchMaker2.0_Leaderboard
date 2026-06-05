@@ -386,20 +386,15 @@
   </div>
 
   <div class="controls">
-    <label for="experiment">Select experiment:</label>
-    <select id="experiment">
-      <option value="bookshelf_smallp_3_10.db" data-gif="gifs/bookshelf_smallp.gif">bookshelf_small_panda</option>
-      <option value="bookshelf_tallp_3_10.db" data-gif="gifs/bookshelf_tallp.gif">bookshelf_tall_panda</option>
-      <option value="bookshelf_thinp_3_10.db" data-gif="gifs/bookshelf_thinp.gif">bookshelf_thin_panda</option>
-      <option value="boxp_3_10.db" data-gif="gifs/boxp.gif">box_panda</option>
-      <option value="cagep_3_10.db" data-gif="gifs/cagep.gif">cage_panda</option>
-      <option value="kitchenp_3_10.db" data-gif="gifs/kitchenp.gif">kitchen_panda</option>
-      <option value="table_barsp_3_10.db" data-gif="gifs/table_barsp.gif">table_bars_panda</option>
-      <option value="table_pickp_3_10.db" data-gif="gifs/table_pickp.gif">table_pick_panda</option>
-      <option value="table_under_pickp_3_10.db" data-gif="gifs/table_under_pickp.gif">table_under_pick_panda</option>
-      <option value="boxf_3_10.db" data-gif="gifs/boxf.gif">box_fetch</option>
+    <label for="robot">Select robot:</label>
+    <select id="robot" onchange="updateExperimentOptions()">
+      <option value="panda">Panda</option>
+      <option value="fetch">Fetch</option>
     </select>
-
+  
+    <label for="experiment">Select experiment:</label>
+    <select id="experiment"></select>
+  
     <button onclick="loadDatabase()">Load</button>
   </div>
 
@@ -471,6 +466,40 @@
       return sorted.length % 2
         ? sorted[mid]
         : (sorted[mid - 1] + sorted[mid]) / 2;
+    }
+
+    const experimentsByRobot = {
+      panda: [
+        { name: "bookshelf_small", db: "bookshelf_smallp_3_10.db", gif: "gifs/bookshelf_smallp.gif" },
+        { name: "bookshelf_tall", db: "bookshelf_tallp_3_10.db", gif: "gifs/bookshelf_tallp.gif" },
+        { name: "bookshelf_thin", db: "bookshelf_thinp_3_10.db", gif: "gifs/bookshelf_thinp.gif" },
+        { name: "box", db: "boxp_3_10.db", gif: "gifs/boxp.gif" },
+        { name: "cage", db: "cagep_3_10.db", gif: "gifs/cagep.gif" },
+        { name: "kitchen", db: "kitchenp_3_10.db", gif: "gifs/kitchenp.gif" },
+        { name: "table_bars", db: "table_barsp_3_10.db", gif: "gifs/table_barsp.gif" },
+        { name: "table_pick", db: "table_pickp_3_10.db", gif: "gifs/table_pickp.gif" },
+        { name: "table_under_pick", db: "table_under_pickp_3_10.db", gif: "gifs/table_under_pickp.gif" }
+      ],
+      fetch: [
+        { name: "box", db: "boxf_3_10.db", gif: "gifs/boxf.gif" }
+      ]
+    };
+    
+    function updateExperimentOptions() {
+      const robot = document.getElementById("robot").value;
+      const experimentSelect = document.getElementById("experiment");
+    
+      experimentSelect.innerHTML = "";
+    
+      experimentsByRobot[robot].forEach(exp => {
+        const option = document.createElement("option");
+        option.value = exp.db;
+        option.dataset.gif = exp.gif;
+        option.textContent = exp.name;
+        experimentSelect.appendChild(option);
+      });
+    
+      updatePreview();
     }
 
     async function loadDatabase() {
@@ -624,7 +653,7 @@
         order: [[1, "desc"], [2, "asc"]]
       });
 
-      updatePreview();
+      updateExperimentOptions();
       loadDatabase();
     });
   </script>
