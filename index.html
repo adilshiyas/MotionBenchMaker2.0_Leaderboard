@@ -366,7 +366,7 @@
     <br><br>
   
     Select a scenario below to view planner success rate, median planning time,
-    and median simplified path length.
+    and median path length.
   
     <br><br>
   
@@ -426,7 +426,7 @@
         </th>
         <th>
           Path Length
-          <span title="Median path length after simplification from successful runs">&#9432;</span>
+          <span title="Median path length from successful runs">&#9432;</span>
         </th>
       </tr>
     </thead>
@@ -525,7 +525,7 @@
 
             const timeIndex = columns.indexOf("time");
             const solvedIndex = columns.indexOf("solved");
-            const simplifiedLengthIndex = columns.indexOf("simplified_solution_length");
+            const pathLengthIndex = columns.indexOf("solution_length");
 
             if (timeIndex !== -1 && solvedIndex !== -1 && values.length > 0) {
               const solvedValues = values.map(r => r[solvedIndex]);
@@ -540,11 +540,11 @@
 
               medianTime = median(times);
 
-              if (simplifiedLengthIndex !== -1) {
+              if (pathLengthIndex !== -1) {
                 const lengths = successRows
-                  .map(r => r[simplifiedLengthIndex])
+                  .map(r => r[pathLengthIndex])
                   .filter(v => v != null);
-
+              
                 medianLength = median(lengths);
               }
             }
