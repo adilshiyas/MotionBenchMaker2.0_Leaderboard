@@ -470,19 +470,27 @@
 
     const experimentsByRobot = {
       panda: [
-        { name: "bookshelf_small", db: "bookshelf_smallp_3_10.db", gif: "gifs/bookshelf_smallp.gif" },
-        { name: "bookshelf_tall", db: "bookshelf_tallp_3_10.db", gif: "gifs/bookshelf_tallp.gif" },
-        { name: "bookshelf_thin", db: "bookshelf_thinp_3_10.db", gif: "gifs/bookshelf_thinp.gif" },
-        { name: "box", db: "boxp_3_10.db", gif: "gifs/boxp.gif" },
-        { name: "cage", db: "cagep_3_10.db", gif: "gifs/cagep.gif" },
-        { name: "kitchen", db: "kitchenp_3_10.db", gif: "gifs/kitchenp.gif" },
-        { name: "table_bars", db: "table_barsp_3_10.db", gif: "gifs/table_barsp.gif" },
-        { name: "table_pick", db: "table_pickp_3_10.db", gif: "gifs/table_pickp.gif" },
-        { name: "table_under_pick", db: "table_under_pickp_3_10.db", gif: "gifs/table_under_pickp.gif" }
+        //{ name: "bookshelf_small", db: "bookshelf_smallp_3_10.db", gif: "gifs/bookshelf_smallp.gif" },
+        { name: "bookshelf_tall", db: "bookshelf_tall_panda_3_10.db", gif: "gifs/pin_tallshelfpanda.gif" },
+        //{ name: "bookshelf_thin", db: "bookshelf_thinp_3_10.db", gif: "gifs/bookshelf_thinp.gif" },
+        { name: "box", db: "box_panda_3_10.db", gif: "gifs/pin_boxpanda.gif" },
+        { name: "cage", db: "cage_panda_3_10.db", gif: "gifs/pin_cagepanda.gif" },
+        { name: "kitchen", db: "kitchen_panda_3_10.db", gif: "gifs/pin_kitchenpanda.gif" },
+        //{ name: "table_bars", db: "table_barsp_3_10.db", gif: "gifs/table_barsp.gif" },
+        { name: "table_pick", db: "table_pick_panda_3_10.db", gif: "gifs/pin_tablepanda.gif" },
+        //{ name: "table_under_pick", db: "table_under_pickp_3_10.db", gif: "gifs/table_under_pickp.gif" }
       ],
       fetch: [
-        { name: "box", db: "boxf_3_10.db", gif: "gifs/boxf.gif" }
-      ]
+        //{ name: "bookshelf_small", db: "bookshelf_smallp_3_10.db", gif: "gifs/bookshelf_smallp.gif" },
+        { name: "bookshelf_tall", db: "bookshelf_tall_fetch_3_10.db", gif: "gifs/pin_tallshelffetch.gif" },
+        //{ name: "bookshelf_thin", db: "bookshelf_thinp_3_10.db", gif: "gifs/bookshelf_thinp.gif" },
+        { name: "box", db: "box_fetch_3_10.db", gif: "gifs/pin_boxfetch.gif" },
+        { name: "cage", db: "cage_fetch_3_10.db", gif: "gifs/pin_cagefetch.gif" },
+        { name: "kitchen", db: "kitchen_fetch_3_10.db", gif: "gifs/pin_kitchenfetch.gif" },
+        //{ name: "table_bars", db: "table_barsp_3_10.db", gif: "gifs/table_barsp.gif" },
+        { name: "table_pick", db: "table_pick_fetch_3_10.db", gif: "gifs/pin_tablefetch.gif" },
+        //{ name: "table_under_pick", db: "table_under_pickp_3_10.db", gif: "gifs/table_under_pickp.gif" }
+      ],
     };
     
     function updateExperimentOptions() {
@@ -509,7 +517,7 @@
       resultBox.textContent = `Loading ${dbName}...`;
 
       try {
-        const response = await fetch(`data/${dbName}`);
+        const response = await fetch(`pin_data/${dbName}`);
 
         if (!response.ok) {
           throw new Error(`Could not load data/${dbName}`);
